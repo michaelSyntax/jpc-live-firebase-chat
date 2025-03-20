@@ -1,5 +1,6 @@
 package com.example.jpc_live_firebase_chat.ui.screens
 
+import android.R.attr.text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +25,6 @@ fun ChatListScreen(
 ) {
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
         content = {
             items(chatProfileList) {
                 ElevatedCard(
@@ -35,6 +34,7 @@ fun ChatListScreen(
                         .clickable(onClick = { onProfileSelection(it.profileId) }),
                     content = {
                         Text(
+                            modifier = Modifier.padding(12.dp),
                             text = it.profileName,
                             fontWeight = FontWeight.Bold
                         )

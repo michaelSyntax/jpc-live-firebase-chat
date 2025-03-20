@@ -29,6 +29,9 @@ class FirebaseViewModel : ViewModel() {
     private var _chatProfileList = MutableStateFlow<List<Profile>>(listOf())
     val chatProfileList = _chatProfileList.asStateFlow()
 
+    private var _currentChatMessages = MutableStateFlow<List<Message>>(listOf())
+    val currentChatMessages = _currentChatMessages.asStateFlow()
+
     val profileCollectionReference: CollectionReference = firestore.collection("profiles")
     private lateinit var profileDocumentReference: DocumentReference
     lateinit var currentChatDocumentReference: DocumentReference
@@ -98,6 +101,7 @@ class FirebaseViewModel : ViewModel() {
             if (error == null && value != null) {
                 val profileList = value.map { it.toObject(Profile::class.java) }.toMutableList()
                 profileList.removeAll { it.profileId == currentUser.value!!.uid }
+                _chatProfileList.value = profileList
             }
         }
     }
@@ -121,6 +125,14 @@ class FirebaseViewModel : ViewModel() {
              */
             if (task.isSuccessful && task.result != null && !task.result.exists()) {
                 currentChatDocumentReference.set(Chat())
+            }
+        }
+        currentChatDocumentReference.addSnapshotListener { value, error ->
+            if (error == null && value != null) {
+                val messages = value.toObject(Chat::class.java)?.messages
+                if (messages != null) {
+                    _currentChatMessages.value = messages
+                }
             }
         }
     }
