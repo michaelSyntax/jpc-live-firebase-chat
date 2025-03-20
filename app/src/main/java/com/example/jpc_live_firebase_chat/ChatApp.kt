@@ -29,7 +29,7 @@ interface Route {
     @Serializable object LoginDestination: Route
     @Serializable object RegisterDestination: Route
     @Serializable object ChatListDestination: Route
-    @Serializable data class ChatDestination(val chatId: String): Route
+    @Serializable data class ChatDestination(val chatPartnerId: String): Route
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +38,7 @@ fun ChatApp() {
     val navHostController = rememberNavController()
     val viewModel: FirebaseViewModel = viewModel()
     val currentUser by viewModel.currentUser.collectAsState()
+    val chatProfileList by viewModel.chatProfileList.collectAsState()
 
     Scaffold(
         topBar = {
@@ -94,7 +95,10 @@ fun ChatApp() {
                 composable<Route.ChatListDestination> {
                     ChatListScreen(
                         modifier = screenModifier,
-
+                        chatProfileList = chatProfileList,
+                        onProfileSelection = { profileId ->
+                            navHostController.navigate(Route.ChatDestination(chatPartnerId = profileId))
+                        }
                     )
                 }
                 composable<Route.ChatDestination> {
