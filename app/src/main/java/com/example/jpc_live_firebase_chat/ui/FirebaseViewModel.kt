@@ -57,19 +57,15 @@ class FirebaseViewModel : ViewModel() {
     }
 
     fun login(email: String, password: String) {
-        if (email.isNotBlank() && password.isNotBlank()) {
-            firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { authResult ->
-                    if (authResult.isSuccessful) {
-                        _currentUser.value = firebaseAuth.currentUser
-                        setProfileDocumentReference()
-                    } else {
-                        handleError(authResult.exception?.message.toString())
-                    }
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { authResult ->
+                if (authResult.isSuccessful) {
+                    _currentUser.value = firebaseAuth.currentUser
+                    setProfileDocumentReference()
+                } else {
+                    handleError(authResult.exception?.message.toString())
                 }
-        } else {
-            handleError(Debug.AUTH_ERROR_MESSAGE.value)
-        }
+            }
     }
 
     fun logout() {
@@ -138,10 +134,9 @@ class FirebaseViewModel : ViewModel() {
     }
 
     /**
-     * id1 = Sender
-     * id2 = Receiver
-     * chatId = BA wenn wir sender sind.
-     * und wenn ChartParnter Sender ist: chatID AB
+     * id1 = A
+     * id2 = B
+     * chatId = der Größe nach sortiert -> A-B
      */
     private fun createChatId(id1: String, id2: String): String {
         val ids = listOf(id1, id2).sorted()
