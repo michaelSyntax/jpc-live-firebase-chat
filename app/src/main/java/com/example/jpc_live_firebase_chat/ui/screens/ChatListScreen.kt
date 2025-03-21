@@ -15,17 +15,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.jpc_live_firebase_chat.model.ChatGroup
 import com.example.jpc_live_firebase_chat.model.Profile
 
 @Composable
 fun ChatListScreen(
     modifier: Modifier = Modifier,
+    chatGroupList: List<ChatGroup>,
     chatProfileList: List<Profile>,
-    onProfileSelection: (String) -> Unit
+    onProfileSelection: (String) -> Unit,
+    onChatGroupSelection: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
         content = {
+            item {
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "Chat Partners",
+                    fontWeight = FontWeight.Bold
+                )
+            }
             items(chatProfileList) {
                 ElevatedCard(
                     modifier = Modifier
@@ -36,6 +46,28 @@ fun ChatListScreen(
                         Text(
                             modifier = Modifier.padding(12.dp),
                             text = it.profileName,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                )
+            }
+            item {
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "Groups",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            items(chatGroupList) {
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .clickable(onClick = { onChatGroupSelection(it.chatGroupId) }),
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(12.dp),
+                            text = it.chatGroupId,
                             fontWeight = FontWeight.Bold
                         )
                     }

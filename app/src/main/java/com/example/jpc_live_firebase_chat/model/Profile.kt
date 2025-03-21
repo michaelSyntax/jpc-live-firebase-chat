@@ -5,5 +5,6 @@ import com.google.firebase.firestore.DocumentId
 data class Profile(
     @DocumentId
     val profileId: String = "",
-    val profileName: String = ""
+    val profileName: String = "",
+    val chatColorAsHex: String = ""
 )

@@ -1,5 +1,6 @@
 package com.example.jpc_live_firebase_chat.ui.screens
 
+import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jpc_live_firebase_chat.model.Message
 import com.example.jpc_live_firebase_chat.ui.components.AuthTextEditField
+import com.example.jpc_live_firebase_chat.utils.colorFromHex
 
 @Composable
 fun ChatScreen(
@@ -38,6 +40,7 @@ fun ChatScreen(
 ) {
     var valueMessage by rememberSaveable { mutableStateOf("") }
 
+
     Column(
         modifier = modifier,
         content = {
@@ -47,7 +50,7 @@ fun ChatScreen(
             ) {
                 items(chatMessages) {
                     val senderIsMe = (it.sender == currentUserId)
-                    val backgroundColor = if (senderIsMe) Color.Blue else Color.Red
+                    val backgroundColor = colorFromHex(it.senderProfileChatColorAsHex)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

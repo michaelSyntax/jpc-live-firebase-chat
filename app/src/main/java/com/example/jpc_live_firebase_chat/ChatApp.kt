@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +30,7 @@ interface Route {
     @Serializable object RegisterDestination: Route
     @Serializable object ChatListDestination: Route
     @Serializable data class ChatDestination(val chatPartnerId: String): Route
+    @Serializable data class GroupChatDestination(val groupChatId: String): Route
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,12 +41,22 @@ fun ChatApp() {
     val currentUser by viewModel.currentUser.collectAsState()
     val chatProfileList by viewModel.chatProfileList.collectAsState()
     val chatMessages by viewModel.currentChatMessages.collectAsState()
+    val chatGroupList by viewModel.chatGroupList.collectAsState()
+    val chatGroupMessages by viewModel.currentChatGroupMessages.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 actions = {
+                    IconButton(
+                        onClick = {
+                            viewModel.createGroup()
+                        },
+                        content = {
+                            Icon(imageVector = Icons.Default.Face, Icons.Default.Face.name)
+                        }
+                    )
                     IconButton(
                         onClick = {
                             viewModel.logout()
@@ -98,9 +110,14 @@ fun ChatApp() {
                     ChatListScreen(
                         modifier = screenModifier,
                         chatProfileList = chatProfileList,
+                        chatGroupList = chatGroupList,
                         onProfileSelection = { profileId ->
                             viewModel.setCurrentChat(profileId)
                             navHostController.navigate(Route.ChatDestination(chatPartnerId = profileId))
+                        },
+                        onChatGroupSelection = {
+                            viewModel.addMemberToChatGroup(it)
+                            navHostController.navigate(Route.GroupChatDestination(groupChatId = it))
                         }
                     )
                 }
@@ -111,6 +128,16 @@ fun ChatApp() {
                         chatMessages = chatMessages,
                         sendMessage = {
                             viewModel.sendMessage(it)
+                        }
+                    )
+                }
+                composable<Route.GroupChatDestination> {
+                    ChatScreen(
+                        modifier = screenModifier,
+                        currentUserId = currentUser!!.uid,
+                        chatMessages = chatGroupMessages,
+                        sendMessage = {
+                            viewModel.sendGroupChatMessage(it)
                         }
                     )
                 }
